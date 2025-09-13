@@ -1,0 +1,202 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: corunest_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/node_modules
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - corunest
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      - DB_HOST=mysql
+      - DB_DATABASE=corunest
+      - DB_USERNAME=corunest_user
+      - DB_PASSWORD=corunest_pass
+      - REDIS_HOST=redis
+      - MAIL_HOST=mailpit
+      - QUEUE_CONNECTION=redis
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+
+  # Nginx Web Server
+  nginx:
+    image: nginx:alpine
+    container_name: corunest_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+      - "8443:443"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default
+      - ./docker/nginx/ssl:/etc/nginx/ssl
+    networks:
+      - corunest
+    depends_on:
+      - app
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: corunest_mysql
+    restart: unless-stopped
+    ports:
+      - "3307:3306" # 3307 to avoid conflict with local mySQL
+    environment:
+      MYSQL_DATABASE: corunest
+      MYSQL_USER: corunest_user
+      MYSQL_PASSWORD: corunest_pass
+      MYSQL_ROOT_PASSWORD: corunest_root_pass
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - corunest
+    command: --default-authentication-plugin=mysql_native_password --sql-mode=""
+
+  # Redis for Cache & Sessions
+  redis:
+    image: redis:7-alpine
+    container_name: corunest_redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379" # 6380 to avoid conflict with local Redis
+    volumes:
+      - redis_data:/database
+    networks:
+      - corunest
+    command: redis_server --appendonly yes --requirepass "corunest_redis_pass"
+
+  # Queue Worker
+  queue:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: corunest_queue
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    networks:
+      - corunest
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      - DB_HOST=mysql
+      - DB_DATABASE=corunest
+      - DB_USERNAME=corunest_user
+      - DB_PASSWORD=corunest_pass
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=corunest_redis_pass
+    command: php artisan queue:work --sleep=3 --tries=3 --max-time=3600
+
+  # Laravel Horizon (Queue Dashboard)
+  horizon:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: corunest_horizon
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    networks:
+      - corunest
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      - DB_HOST=mysql
+      - DB_DATABASE=corunest
+      - DB_USERNAME=corunest_user
+      - DB_PASSWORD=corunest_pass
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=corunest_redis_pass
+    command: php artisan horizon
+
+  # Mailpit (Email Testing)
+  mailpit:
+    image: axllent/mailpit
+    container_name: corunest_mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - corunest
+
+  # phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: corunest_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_HOST=mysql
+      - PMA_USER=root
+      - PMA_PASSWORD=corunest_pass
+      - PMA_ARBITRARY=1
+    networks:
+      - corunest
+    depends_on:
+      - mysql
+    volumes: mysql_data
+
+  # Node.js for Frontend Development
+  node:
+    image: node:20-alpine
+    container_name: corunest_node
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - node_modules:/var/www/html/node_modules
+    networks:
+      - corunest
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "5173:5173" # Vite dev server
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+  # Capacitor for Mobile App Building
+  capacitor:
+    image: node:20-alpine
+    container_name: corunest_capacitor
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - capacitor_data:/var/www/html/android
+      - capacitor_data:/var/www/html/ios
+    networks:
+      - corunest
+    profiles:
+      - mobile # Only run when building mobile apps
+    command: sh -c "npm install -g @capacitor/cli && npm run build && npx cap sync"
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  node_modules:
+    driver: local
+  capacitor_data:
+    driver: local
+
+networks:
+  corunest:
+    driver: bridge
