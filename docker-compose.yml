@@ -154,7 +154,7 @@ services:
       - corunest
     depends_on:
       - mysql
-    volumes: mysql_data
+    volumes: ["mysql_data"]
 
   # Node.js for Frontend Development
   node:
