@@ -67,7 +67,7 @@ COPY docker/php/php.ini /usr/local/etc/php/conf.d/laravel.ini
 # Switch to non-root user for security
 USER www-data
 
-EXPOSE 80
+EXPOSE 8000
 
 # Use supervisor to run nginx and php-fpm
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
