@@ -1,10 +1,33 @@
 # Multi-stage build for Laravel application
-FROM node:18-alpine AS frontend-builder
+
+# Frontend builder stage
+FROM node:20-alpine AS frontend-builder
 
 WORKDIR /app
+
+# Install system dependencies (including git) and PHP extensions for Composer
+RUN apk add --no-cache git php php-phar php-json php-mbstring php-openssl curl bash \
+    php83-dom \
+    php83-session \
+    php83-pcntl \
+    php83-fileinfo \
+    php83-tokenizer \
+    php83-iconv \
+    php83-posix \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Copy PHP composer files and install PHP dependencies
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+
+# Copy node files and install JS dependencies
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm install
+
+# Copy the rest of the application including vendor (now exists due to composer install)
 COPY . .
+
+# Build frontend assets
 RUN npm run build
 
 # PHP Application Stage
@@ -47,7 +70,7 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 # Copy application files
 COPY . .
 
-# Copy built assets from frontend stage
+# Copy built assets from frontend-builder stage
 COPY --from=frontend-builder /app/public/build ./public/build
 
 # Complete composer setup

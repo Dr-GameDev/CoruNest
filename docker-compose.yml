@@ -36,7 +36,7 @@ services:
     container_name: corunest_nginx
     restart: unless-stopped
     ports:
-      - "8000:80"
+      - "8088:80"
       - "8443:443"
     volumes:
       - .:/var/www/html
@@ -154,7 +154,8 @@ services:
       - corunest
     depends_on:
       - mysql
-    volumes: ["mysql_data"]
+    volumes:
+      - mysql_data:/var/lib/mysql
 
   # Node.js for Frontend Development
   node:
