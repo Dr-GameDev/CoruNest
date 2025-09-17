@@ -1,7 +1,6 @@
 // capacitor.config.ts
-import { CapacitorConfig } from '@capacitor/cli';
 
-const config: CapacitorConfig = {
+const config = {
     appId: 'org.corunest.app',
     appName: 'CoruNest',
     webDir: 'public',
