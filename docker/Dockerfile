@@ -87,8 +87,8 @@ COPY docker/nginx/default.conf /etc/nginx/sites-available/default
 COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/laravel.ini
 
-# Switch to non-root user for security
-USER www-data
+# Switch to non-root user for security (production)
+# USER www-data
 
 EXPOSE 8000
 
