@@ -19,6 +19,13 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->string('phone')->nullable()->after('email');
+            $table->enum('role', ['donor', 'volunteer', 'admin', 'staff'])->default('donor')->after('phone');
+            $table->json('profile')->nullable()->after('role'); // Additional profile data
+            $table->timestamp('last_donation_at')->nullable()->after('profile');
+            $table->timestamp('last_volunteer_at')->nullable()->after('last_donation_at');
+            $table->boolean('email_notifications')->default(true)->after('last_volunteer_at');
+            $table->boolean('sms_notifications')->default(false)->after('email_notifications');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -42,7 +49,17 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn([
+                'phone',
+                'role',
+                'profile',
+                'last_donation_at',
+                'last_volunteer_at',
+                'email_notifications',
+                'sms_notifications'
+            ]);
+        });
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
     }
