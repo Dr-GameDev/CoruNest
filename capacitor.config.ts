@@ -7,23 +7,28 @@ const config: CapacitorConfig = {
     webDir: 'public',
     bundledWebRuntime: false,
     server: {
-        url: process.env.NODE_ENV === 'production'
-            ? 'https://yourdomain.com'
-            : 'http://localhost:8000',
-        cleartext: true
+        androidScheme: 'https'
     },
     plugins: {
+        SplashScreen: {
+            launchShowDuration: 2000,
+            backgroundColor: "#10b981",
+            showSpinner: false,
+            androidSpinnerStyle: "large",
+            iosSpinnerStyle: "small",
+            splashFullScreen: true,
+            splashImmersive: true
+        },
+        StatusBar: {
+            style: "dark",
+            backgroundColor: "#10b981"
+        },
         PushNotifications: {
             presentationOptions: ["badge", "sound", "alert"]
         },
         LocalNotifications: {
             smallIcon: "ic_stat_icon_config_sample",
-            iconColor: "#488AFF"
-        },
-        SplashScreen: {
-            launchShowDuration: 2000,
-            backgroundColor: "#0ea5e9",
-            showSpinner: false
+            iconColor: "#10b981"
         }
     }
 };
