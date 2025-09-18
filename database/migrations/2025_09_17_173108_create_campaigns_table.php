@@ -32,7 +32,7 @@ return new class extends Migration
             $table->decimal('average_donation', 8, 2)->default(0);
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
-            
+
             // Indexes for performance
             $table->index(['status', 'featured']);
             $table->index(['start_at', 'end_at']);

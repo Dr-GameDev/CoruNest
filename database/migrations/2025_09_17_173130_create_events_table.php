@@ -38,7 +38,7 @@ return new class extends Migration
             $table->json('metadata')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
-            
+
             // Indexes
             $table->index(['status', 'starts_at']);
             $table->index(['starts_at', 'ends_at']);

@@ -1,7 +1,7 @@
 {
   "name": "CoruNest - NGO Management Platform",
   "short_name": "CoruNest",
-  "description": "Organise. Fund. Mobilise.",
+  "description": "Empowering NGOs across Cape Town through transparent donations and volunteer mobilisation. Organise. Fund. Mobilise.",
   "start_url": "/",
   "display": "standalone",
   "display_override": ["window-controls-overlay"],

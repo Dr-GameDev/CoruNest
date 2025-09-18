@@ -71,10 +71,10 @@ class Donation extends Model
                         $donation->receipt_number = static::generateReceiptNumber();
                         $donation->saveQuietly();
                     }
-                    
+
                     // Update campaign totals
                     $donation->campaign->updateTotals();
-                    
+
                     // Update user's last donation timestamp
                     if ($donation->user) {
                         $donation->user->updateLastDonation();

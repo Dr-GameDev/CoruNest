@@ -282,11 +282,11 @@ class Event extends Model
     {
         return $query->where(function ($q) use ($startDate, $endDate) {
             $q->whereBetween('starts_at', [$startDate, $endDate])
-              ->orWhereBetween('ends_at', [$startDate, $endDate])
-              ->orWhere(function ($q2) use ($startDate, $endDate) {
-                  $q2->where('starts_at', '<=', $startDate)
-                     ->where('ends_at', '>=', $endDate);
-              });
+                ->orWhereBetween('ends_at', [$startDate, $endDate])
+                ->orWhere(function ($q2) use ($startDate, $endDate) {
+                    $q2->where('starts_at', '<=', $startDate)
+                        ->where('ends_at', '>=', $endDate);
+                });
         });
     }
 
@@ -301,9 +301,9 @@ class Event extends Model
 
         return $query->where(function ($q) use ($search) {
             $q->where('title', 'like', "%{$search}%")
-              ->orWhere('description', 'like', "%{$search}%")
-              ->orWhere('location', 'like', "%{$search}%")
-              ->orWhere('category', 'like', "%{$search}%");
+                ->orWhere('description', 'like', "%{$search}%")
+                ->orWhere('location', 'like', "%{$search}%")
+                ->orWhere('category', 'like', "%{$search}%");
         });
     }
 

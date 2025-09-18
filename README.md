@@ -1,66 +1,375 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CoruNest - NGO Donation & Volunteer Portal
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> **Organise. Fund. Mobilise.**
 
-## About Laravel
+CoruNest is a comprehensive donation and volunteer management platform designed specifically for small NGOs in Cape Town. It provides a secure, transparent, and efficient way to manage fundraising campaigns, coordinate volunteer activities, and engage with donors and supporters.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🌟 Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Public Features
+- **Campaign Browsing**: Discover active fundraising campaigns with detailed information
+- **Secure Donations**: Support campaigns via Yoco (cards) or Ozow (bank transfers)
+- **Volunteer Opportunities**: Find and sign up for volunteer events
+- **Donor Dashboard**: Track donation history and download receipts
+- **Mobile PWA**: Install as a mobile app for quick access
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Admin Features
+- **Campaign Management**: Create, edit, and manage fundraising campaigns
+- **Donation Tracking**: Monitor donations, process refunds, and generate reports
+- **Volunteer Management**: Coordinate volunteer signups and track participation
+- **Analytics Dashboard**: Comprehensive insights with charts and metrics
+- **Bulk Email System**: Communicate with donors and volunteers
+- **Audit Logging**: Complete activity tracking for transparency
 
-## Learning Laravel
+### Technical Features
+- **Hybrid Frontend**: Laravel Blade + Alpine.js for public pages, React.js for admin
+- **Payment Integration**: Yoco and Ozow payment gateways
+- **PWA Support**: Offline functionality and mobile app installation
+- **Role-based Access**: Admin, staff, donor, and volunteer roles
+- **Email Automation**: Automated receipts and notifications
+- **Database Optimization**: Indexed queries and efficient relationships
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🛠 Tech Stack
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **Backend**: PHP 8.2+ with Laravel 11
+- **Database**: MySQL 8.x
+- **Cache/Queue**: Redis + Laravel Horizon
+- **Frontend**: 
+  - Public: Laravel Blade + Alpine.js + Tailwind CSS
+  - Admin: React.js + Inertia.js + Tailwind CSS
+- **Payments**: Yoco + Ozow
+- **Email**: Mailgun/SendGrid
+- **Mobile**: PWA + Capacitor
+- **DevOps**: Docker + Docker Compose
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🚀 Quick Start
 
-## Laravel Sponsors
+### Prerequisites
+- Docker and Docker Compose
+- Git
+- Node.js 20+ (for building assets)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Installation
 
-### Premium Partners
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-org/corunest.git
+   cd corunest
+   ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+2. **Set up environment**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
 
-## Contributing
+3. **Start with Docker**
+   ```bash
+   make setup
+   ```
+   This command will:
+   - Build Docker containers
+   - Install PHP dependencies
+   - Install Node.js dependencies
+   - Generate application key
+   - Run database migrations and seeders
+   - Start all services
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. **Access the application**
+   - **Main App**: http://localhost:8088
+   - **Admin Panel**: http://localhost:8088/admin
+   - **phpMyAdmin**: http://localhost:8080
+   - **Mailpit**: http://localhost:8025
 
-## Code of Conduct
+### Default Login Credentials
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+After seeding, you can use these accounts:
 
-## Security Vulnerabilities
+- **Admin**: admin@corunest.org / password
+- **Staff**: staff@corunest.org / password  
+- **Donor**: donor1@example.com / password
+- **Volunteer**: volunteer1@example.com / password
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 📖 Usage
 
-## License
+### Making Donations
+1. Browse campaigns at `/campaigns`
+2. Click "Donate Now" on any campaign
+3. Enter donation amount and payment details
+4. Complete payment via Yoco or Ozow
+5. Receive email receipt automatically
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Volunteering
+1. View events at `/events`
+2. Click "Volunteer" on an event
+3. Fill out volunteer form with skills and availability
+4. Wait for confirmation from event organizers
+5. Receive reminders before the event
+
+### Admin Management
+1. Access admin panel at `/admin`
+2. Create campaigns with rich content and images
+3. Monitor donations and volunteer signups
+4. Send bulk emails to donors/volunteers
+5. View analytics and generate reports
+
+## 🏗 Development
+
+### Available Make Commands
+
+```bash
+# Development
+make up           # Start all services
+make down         # Stop all services  
+make restart      # Restart all services
+make logs         # View application logs
+make shell        # Access application container
+
+# Database
+make migrate      # Run migrations
+make fresh        # Fresh migration with seeders
+make db-backup    # Backup database
+
+# Cache & Optimization
+make clear-cache  # Clear all caches
+make optimize     # Optimize for production
+
+# Testing
+make test         # Run test suite
+
+# Cleanup
+make clean        # Remove containers and volumes
+```
+
+### Local Development Setup
+
+If you prefer running without Docker:
+
+1. **Install dependencies**
+   ```bash
+   composer install
+   npm install
+   ```
+
+2. **Set up database**
+   ```bash
+   php artisan key:generate
+   php artisan migrate --seed
+   ```
+
+3. **Build assets**
+   ```bash
+   npm run dev
+   ```
+
+4. **Start services**
+   ```bash
+   php artisan serve
+   npm run dev # In separate terminal
+   ```
+
+### File Structure
+
+```
+corunest/
+├── app/
+│   ├── Http/Controllers/     # Application controllers
+│   ├── Models/              # Eloquent models
+│   ├── Services/            # Business logic services
+│   └── ...
+├── database/
+│   ├── migrations/          # Database migrations
+│   ├── seeders/            # Data seeders
+│   └── factories/          # Model factories
+├── resources/
+│   ├── views/              # Blade templates (public pages)
+│   ├── js/                 # React components (admin)
+│   └── css/                # Stylesheets
+├── public/
+│   ├── manifest.json       # PWA manifest
+│   ├── sw.js              # Service worker
+│   └── icons/             # PWA icons
+├── docker/                # Docker configuration
+├── tests/                 # Test files
+└── ...
+```
+
+## 🔐 Security
+
+CoruNest implements multiple security measures:
+
+- **Authentication**: Laravel Breeze with session-based auth
+- **Authorization**: Role-based access control (RBAC)
+- **Payment Security**: PCI-compliant payment processing
+- **Data Protection**: POPIA-compliant data handling
+- **CSRF Protection**: Built-in Laravel CSRF protection
+- **Rate Limiting**: API and form submission rate limiting
+- **Audit Logging**: Complete activity tracking
+- **Secure Headers**: Security headers for XSS/CSRF protection
+
+## 💳 Payment Configuration
+
+### Yoco Setup
+1. Create account at https://www.yoco.com
+2. Get API keys from dashboard
+3. Add to `.env`:
+   ```bash
+   YOCO_SECRET_KEY=sk_test_your_key
+   YOCO_PUBLIC_KEY=pk_test_your_key
+   ```
+
+### Ozow Setup  
+1. Contact Ozow for merchant account
+2. Get integration credentials
+3. Add to `.env`:
+   ```bash
+   OZOW_SITE_CODE=your_site_code
+   OZOW_PRIVATE_KEY=your_private_key
+   ```
+
+## 📱 PWA Installation
+
+CoruNest is a Progressive Web App that can be installed on mobile devices:
+
+1. **Mobile Installation**:
+   - Visit site on mobile browser
+   - Tap "Add to Home Screen" prompt
+   - App installs like native app
+
+2. **Desktop Installation**:
+   - Visit site in Chrome/Edge
+   - Click install icon in address bar
+   - App installs as desktop application
+
+## 🧪 Testing
+
+CoruNest includes comprehensive tests:
+
+```bash
+# Run all tests
+make test
+
+# Run specific test types
+php artisan test --testsuite=Feature
+php artisan test --testsuite=Unit
+
+# Run with coverage
+php artisan test --coverage
+```
+
+### Test Coverage
+- **Unit Tests**: Model logic, services, utilities
+- **Feature Tests**: HTTP endpoints, workflows
+- **Browser Tests**: End-to-end user journeys (Playwright)
+
+## 📊 Monitoring & Analytics
+
+### Built-in Analytics
+- Donation trends and metrics
+- Campaign performance tracking  
+- Volunteer participation rates
+- User engagement analytics
+
+### External Monitoring
+- **Sentry**: Error tracking and performance monitoring
+- **Laravel Telescope**: Local development debugging
+- **Google Analytics**: Website traffic analysis
+
+## 🚢 Deployment
+
+### Production Deployment
+
+1. **Server Requirements**:
+   - Ubuntu 20.04+ or similar
+   - Docker & Docker Compose
+   - SSL certificate
+   - Domain name
+
+2. **Deploy with Docker**:
+   ```bash
+   # Set production environment
+   cp .env.example .env.production
+   # Configure production settings
+
+   # Deploy
+   docker-compose -f docker-compose.prod.yml up -d
+   ```
+
+3. **Configure SSL**:
+   ```bash
+   # Using Let's Encrypt with Nginx
+   certbot --nginx -d your-domain.com
+   ```
+
+### Environment-Specific Configuration
+
+#### Staging
+```bash
+APP_ENV=staging
+APP_DEBUG=false
+YOCO_MODE=test
+OZOW_IS_TEST=true
+```
+
+#### Production
+```bash
+APP_ENV=production  
+APP_DEBUG=false
+YOCO_MODE=live
+OZOW_IS_TEST=false
+QUEUE_CONNECTION=redis
+CACHE_DRIVER=redis
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Development Workflow
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Make changes and add tests
+4. Run test suite (`make test`)
+5. Commit changes (`git commit -m 'Add amazing feature'`)
+6. Push to branch (`git push origin feature/amazing-feature`)
+7. Open Pull Request
+
+### Code Standards
+- Follow PSR-12 coding standards
+- Write comprehensive tests for new features
+- Update documentation for API changes
+- Use conventional commit messages
+
+## 📝 Documentation
+
+- [API Documentation](docs/api.md)
+- [Admin Guide](docs/admin-guide.md)
+- [Deployment Guide](docs/deployment.md)
+- [Developer Guide](docs/developer-guide.md)
+
+## 🔄 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
+
+## 📄 License
+
+CoruNest is open-source software licensed under the [MIT License](LICENSE).
+
+## 🆘 Support
+
+- **Documentation**: Check the `/docs` folder
+- **Issues**: Create an issue on GitHub
+- **Email**: support@corunest.org
+- **Community**: Join our Discord server
+
+## 🙏 Acknowledgments
+
+- Built with [Laravel](https://laravel.com)
+- UI powered by [Tailwind CSS](https://tailwindcss.com)
+- Icons from [Heroicons](https://heroicons.com)
+- Payment processing by [Yoco](https://yoco.com) and [Ozow](https://ozow.com)
+- Inspired by the amazing NGO community in Cape Town
+
+---
+
+**CoruNest** - *Empowering NGOs to create meaningful change through technology.*

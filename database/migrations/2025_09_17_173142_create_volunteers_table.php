@@ -32,10 +32,10 @@ return new class extends Migration
             $table->timestamp('completed_at')->nullable();
             $table->foreignId('confirmed_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
-            
+
             // Prevent duplicate signups
             $table->unique(['user_id', 'event_id']);
-            
+
             // Indexes
             $table->index(['event_id', 'status']);
             $table->index('status');

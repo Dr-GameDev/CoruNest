@@ -31,7 +31,7 @@ return new class extends Migration
             $table->timestamp('completed_at')->nullable();
             $table->timestamp('failed_at')->nullable();
             $table->timestamps();
-            
+
             // Indexes for performance
             $table->index(['status', 'completed_at']);
             $table->index(['campaign_id', 'status']);
