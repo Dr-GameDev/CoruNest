@@ -252,6 +252,46 @@ class Campaign extends Model
     }
 
     /**
+     * Scope to get active campaigns.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('start_at')
+                  ->orWhere('start_at', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('end_at')
+                  ->orWhere('end_at', '>=', now());
+            });
+    }
+
+    /**
+     * Scope to get featured campaigns.
+     */
+    public function scopeFeatured($query)
+    {
+        return $query->where('featured', true);
+    }
+
+    /**
+     * Scope to search campaigns.
+     */
+    public function scopeSearch($query, ?string $search)
+    {
+        if (!$search) {
+            return $query;
+        }
+
+        return $query->where(function ($q) use ($search) {
+            $q->where('title', 'like', "%{$search}%")
+              ->orWhere('summary', 'like', "%{$search}%")
+              ->orWhere('category', 'like', "%{$search}%");
+        });
+    }
+
+    /**
      * Get the route key for the model.
      */
     public function getRouteKeyName(): string
@@ -324,44 +364,4 @@ class Campaign extends Model
     {
         return 'R' . number_format($this->remaining_amount, 2);
     }
-} get active campaigns.
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('status', 'active')
-            ->where(function ($q) {
-                $q->whereNull('start_at')
-                  ->orWhere('start_at', '<=', now());
-            })
-            ->where(function ($q) {
-                $q->whereNull('end_at')
-                  ->orWhere('end_at', '>=', now());
-            });
-    }
-
-    /**
-     * Scope to get featured campaigns.
-     */
-    public function scopeFeatured($query)
-    {
-        return $query->where('featured', true);
-    }
-
-    /**
-     * Scope to search campaigns.
-     */
-    public function scopeSearch($query, ?string $search)
-    {
-        if (!$search) {
-            return $query;
-        }
-
-        return $query->where(function ($q) use ($search) {
-            $q->where('title', 'like', "%{$search}%")
-              ->orWhere('summary', 'like', "%{$search}%")
-              ->orWhere('category', 'like', "%{$search}%");
-        });
-    }
-
-    /**
-     * Scope to
+}
