@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Campaign;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
+use Illuminate\Support\Str;
 
 class CampaignController extends Controller
 {
@@ -59,12 +61,20 @@ class CampaignController extends Controller
 
         // Sort options
         $sort = $request->get('sort', 'latest');
-        match($sort) {
-            'ending_soon' => $query->endingSoon(),
-            'progress' => $query->orderByProgress(),
-            'featured' => $query->featured()->latest(),
-            default => $query->latest(),
-        };
+        switch($sort) {
+            case 'ending_soon':
+                $query->endingSoon();
+                break;
+            case 'progress':
+                $query->orderByProgress();
+                break;
+            case 'featured':
+                $query->featured()->latest();
+                break;
+            default:
+                $query->latest();
+                break;
+        }
 
         $campaigns = $query->paginate(12)->withQueryString();
 
@@ -88,8 +98,8 @@ class CampaignController extends Controller
      */
     public function show(Campaign $campaign): View
     {
-        // Only show active campaigns to public or drafts to admin
-        if ($campaign->status === 'draft' && !auth()->user()?->canManageCampaigns()) {
+        // Only show active campaigns to public or drafts to authorized users
+        if ($campaign->status === 'draft' && !$this->canManageCampaigns()) {
             abort(404);
         }
 
@@ -97,22 +107,25 @@ class CampaignController extends Controller
             abort(404, 'This campaign is no longer active.');
         }
 
-        $campaign->load(['creator', 'donations' => function($query) {
-            $query->completed()
-                ->where('anonymous', false)
-                ->latest()
-                ->limit(10);
-        }]);
+        $campaign->load([
+            'creator',
+            'completedDonations' => function($query) {
+                $query->where('anonymous', false)
+                    ->with('user')
+                    ->latest()
+                    ->limit(10);
+            }
+        ]);
 
         // Related campaigns
         $relatedCampaigns = Campaign::active()
             ->where('id', '!=', $campaign->id)
             ->where('category', $campaign->category)
+            ->with(['creator'])
             ->limit(3)
             ->get();
 
-        $recentDonations = $campaign->donations()
-            ->completed()
+        $recentDonations = $campaign->completedDonations()
             ->where('anonymous', false)
             ->with('user')
             ->latest()
@@ -131,7 +144,7 @@ class CampaignController extends Controller
      */
     public function donate(Campaign $campaign): View
     {
-        if ($campaign->status !== 'active' || !$campaign->is_active) {
+        if (!$campaign->is_active) {
             abort(404, 'This campaign is not accepting donations.');
         }
 
@@ -146,7 +159,7 @@ class CampaignController extends Controller
     /**
      * Get campaigns by category for AJAX requests.
      */
-    public function byCategory(Request $request)
+    public function byCategory(Request $request): JsonResponse
     {
         $category = $request->get('category');
         
@@ -182,12 +195,12 @@ class CampaignController extends Controller
     /**
      * Search campaigns for autocomplete.
      */
-    public function search(Request $request)
+    public function search(Request $request): JsonResponse
     {
         $query = $request->get('q');
         
         if (!$query || strlen($query) < 2) {
-            return response()->json([]);
+            return response()->json(['campaigns' => []]);
         }
 
         $campaigns = Campaign::active()
@@ -208,5 +221,21 @@ class CampaignController extends Controller
                 ];
             }),
         ]);
+    }
+
+    /**
+     * Check if the current user can manage campaigns.
+     */
+    private function canManageCampaigns(): bool
+    {
+        $user = auth()->user();
+        
+        if (!$user) {
+            return false;
+        }
+
+        // Assuming you have roles/permissions system
+        // Adjust this logic based on your authorization system
+        return $user->hasRole('admin') || $user->hasRole('campaign_manager') || $user->can('manage campaigns');
     }
 }
